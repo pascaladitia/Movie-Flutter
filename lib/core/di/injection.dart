@@ -14,11 +14,15 @@ import '../../features/movies/presentation/favorites/bloc/favorites_cubit.dart';
 import '../../features/movies/presentation/home/bloc/home_movies_cubit.dart';
 import '../../features/movies/presentation/search/bloc/search_movies_cubit.dart';
 import '../network/dio_client.dart';
+import '../storage/prefs_manager.dart';
+import '../../features/settings/presentation/bloc/settings_cubit.dart';
 
 final sl = GetIt.instance;
 
 Future<void> configureDependencies() async {
   sl.registerLazySingleton(() => DioClient.create().dio);
+  sl.registerLazySingleton(() => PrefsManager());
+  sl.registerLazySingleton(() => SettingsCubit(sl()));
   sl.registerLazySingleton(() => MoviesRemoteDataSource(sl()));
   sl.registerLazySingleton(() => FavoritesLocalDataSource());
 
@@ -34,7 +38,7 @@ Future<void> configureDependencies() async {
   sl.registerLazySingleton(() => IsFavoriteUseCase(sl()));
 
   sl.registerFactory(() => HomeMoviesCubit(discoverUseCase: sl(), sectionsUseCase: sl()));
-  sl.registerFactory(() => SearchMoviesCubit(sl()));
+  sl.registerFactory(() => SearchMoviesCubit(sl(), sl()));
   sl.registerFactory(() => FavoritesCubit(getFavorites: sl(), addFavorite: sl(), removeFavorite: sl()));
   sl.registerFactory(() => MovieDetailCubit(getVideos: sl(), isFavoriteUseCase: sl(), addFavoriteUseCase: sl(), removeFavoriteUseCase: sl()));
 }

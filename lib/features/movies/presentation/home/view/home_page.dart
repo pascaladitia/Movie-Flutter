@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/di/injection.dart';
 import '../../../../../core/l10n/app_localizations.dart';
+import '../../../../../core/widgets/app_error_dialog.dart';
+import '../../../../../core/widgets/app_loading.dart';
 import '../../../../../core/widgets/movie_poster.dart';
 import '../../../domain/entities/movie.dart';
 import '../../detail/view/movie_detail_page.dart';
@@ -55,86 +57,90 @@ class _HomePageState extends State<HomePage> {
           return Scaffold(
             body: RefreshIndicator(
               onRefresh: () => context.read<HomeMoviesCubit>().loadInitial(),
-              child: BlocBuilder<HomeMoviesCubit, HomeMoviesState>(
-                builder: (context, state) {
-                  if (state.isLoading) return const Center(child: CircularProgressIndicator());
-                  if (state.error != null && state.discoverMovies.isEmpty) {
-                    return ListView(children: [const SizedBox(height: 180), Center(child: Text(state.error!))]);
-                  }
+              child: BlocListener<HomeMoviesCubit, HomeMoviesState>(
+                listenWhen: (previous, current) => previous.error != current.error && current.error != null,
+                listener: (context, state) => showAppErrorDialog(context, message: state.error!),
+                child: BlocBuilder<HomeMoviesCubit, HomeMoviesState>(
+                  builder: (context, state) {
+                    if (state.isLoading) return const AppLoading();
+                    if (state.error != null && state.discoverMovies.isEmpty) {
+                      return ListView(children: [const SizedBox(height: 180), Center(child: Text(state.error!))]);
+                    }
 
-                  return CustomScrollView(
-                    controller: _scrollController,
-                    slivers: [
-                      SliverAppBar.large(
-                        pinned: true,
-                        title: const Text('Movie App'),
-                        flexibleSpace: FlexibleSpaceBar(
-                          background: DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Theme.of(context).colorScheme.primaryContainer,
-                                  Theme.of(context).colorScheme.surface,
-                                ],
+                    return CustomScrollView(
+                      controller: _scrollController,
+                      slivers: [
+                        SliverAppBar.large(
+                          pinned: true,
+                          title: const Text('Movie App'),
+                          flexibleSpace: FlexibleSpaceBar(
+                            background: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Theme.of(context).colorScheme.primaryContainer,
+                                    Theme.of(context).colorScheme.surface,
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      SliverToBoxAdapter(child: SectionTitle(title: l10n.topRatedMovies)),
-                      SliverToBoxAdapter(
-                        child: HorizontalMovieStrip(movies: state.topRated, onTapMovie: _openDetail),
-                      ),
-                      SliverToBoxAdapter(child: SectionTitle(title: l10n.upcomingMovies)),
-                      SliverToBoxAdapter(
-                        child: HorizontalMovieStrip(movies: state.upcoming, onTapMovie: _openDetail),
-                      ),
-                      SliverToBoxAdapter(child: SectionTitle(title: l10n.popularMovies)),
-                      SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
-                        sliver: SliverGrid(
-                          delegate: SliverChildBuilderDelegate((context, index) {
-                            final movie = state.discoverMovies[index];
-                            return Card(
-                              clipBehavior: Clip.antiAlias,
-                              child: InkWell(
-                                onTap: () => _openDetail(movie),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: SizedBox.expand(
-                                        child: MoviePoster(path: movie.posterPath, width: double.infinity, height: double.infinity),
+                        SliverToBoxAdapter(child: SectionTitle(title: l10n.topRatedMovies)),
+                        SliverToBoxAdapter(
+                          child: HorizontalMovieStrip(movies: state.topRated, onTapMovie: _openDetail),
+                        ),
+                        SliverToBoxAdapter(child: SectionTitle(title: l10n.upcomingMovies)),
+                        SliverToBoxAdapter(
+                          child: HorizontalMovieStrip(movies: state.upcoming, onTapMovie: _openDetail),
+                        ),
+                        SliverToBoxAdapter(child: SectionTitle(title: l10n.popularMovies)),
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
+                          sliver: SliverGrid(
+                            delegate: SliverChildBuilderDelegate((context, index) {
+                              final movie = state.discoverMovies[index];
+                              return Card(
+                                clipBehavior: Clip.antiAlias,
+                                child: InkWell(
+                                  onTap: () => _openDetail(movie),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: SizedBox.expand(
+                                          child: MoviePoster(path: movie.posterPath, width: double.infinity, height: double.infinity),
+                                        ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Text(movie.title, maxLines: 2, overflow: TextOverflow.ellipsis),
-                                    ),
-                                  ],
+                                      Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Text(movie.title, maxLines: 2, overflow: TextOverflow.ellipsis),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          }, childCount: state.discoverMovies.length),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 10,
-                            crossAxisSpacing: 10,
-                            childAspectRatio: 0.62,
+                              );
+                            }, childCount: state.discoverMovies.length),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10,
+                              childAspectRatio: 0.62,
+                            ),
                           ),
                         ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 24),
-                          child: Center(child: state.isLoadingMore ? const CircularProgressIndicator() : const SizedBox.shrink()),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 24),
+                            child: Center(child: state.isLoadingMore ? const CircularProgressIndicator() : const SizedBox.shrink()),
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                },
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
           );

@@ -9,6 +9,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
   await configureDependencies();
-  await SettingsCubit.instance.init();
+  await sl<SettingsCubit>().init();
   runApp(const MovieApp());
 }

@@ -10,6 +10,12 @@ class MoviesRemoteDataSource {
 
   MoviesRemoteDataSource(this.dio);
 
+  Failure _mapApiFailure(DioException e) {
+    final statusCode = e.response?.statusCode;
+    final message = e.message ?? 'Network error';
+    return Failure('API: ${statusCode != null ? '[$statusCode] ' : ''}$message');
+  }
+
   Future<MoviePageModel> discoverMovies({required int page}) async {
     try {
       final response = await dio.get('/discover/movie', queryParameters: {
@@ -19,7 +25,7 @@ class MoviesRemoteDataSource {
       });
       return MoviePageModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {
-      throw Failure(e.message ?? 'Network error');
+      throw _mapApiFailure(e);
     }
   }
 
@@ -32,7 +38,7 @@ class MoviesRemoteDataSource {
           .toList();
       return results;
     } on DioException catch (e) {
-      throw Failure(e.message ?? 'Network error');
+      throw _mapApiFailure(e);
     }
   }
 
@@ -45,7 +51,7 @@ class MoviesRemoteDataSource {
           .toList();
       return results;
     } on DioException catch (e) {
-      throw Failure(e.message ?? 'Network error');
+      throw _mapApiFailure(e);
     }
   }
 
@@ -55,7 +61,7 @@ class MoviesRemoteDataSource {
       final results = (response.data['results'] as List<dynamic>?) ?? [];
       return results.map((json) => MovieModel.fromJson(json as Map<String, dynamic>)).toList();
     } on DioException catch (e) {
-      throw Failure(e.message ?? 'Network error');
+      throw _mapApiFailure(e);
     }
   }
 
@@ -65,7 +71,7 @@ class MoviesRemoteDataSource {
       final results = (response.data['results'] as List<dynamic>?) ?? [];
       return results.map((json) => VideoModel.fromJson(json as Map<String, dynamic>)).toList();
     } on DioException catch (e) {
-      throw Failure(e.message ?? 'Network error');
+      throw _mapApiFailure(e);
     }
   }
 }

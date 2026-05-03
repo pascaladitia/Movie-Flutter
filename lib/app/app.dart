@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import '../core/di/injection.dart';
 import '../core/l10n/app_localizations.dart';
 import '../core/theme/app_theme.dart';
 import '../features/settings/presentation/bloc/settings_cubit.dart';
@@ -13,7 +14,7 @@ class MovieApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsCubit, SettingsState>(
-      bloc: SettingsCubit.instance,
+      bloc: sl<SettingsCubit>(),
       builder: (context, state) {
         return MaterialApp(
           title: 'Movie App',
