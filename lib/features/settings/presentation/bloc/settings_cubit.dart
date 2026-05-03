@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/constants/prefs_keys.dart';
 import '../../../../core/storage/prefs_manager.dart';
 
 class SettingsState extends Equatable {
@@ -22,8 +23,6 @@ class SettingsState extends Equatable {
 }
 
 class SettingsCubit extends Cubit<SettingsState> {
-  static const _themeModeKey = 'themeMode';
-  static const _localeCodeKey = 'localeCode';
   final PrefsManager prefsManager;
 
   SettingsCubit(this.prefsManager)
@@ -31,8 +30,8 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   Future<void> init() async {
     await prefsManager.init();
-    final theme = prefsManager.getString(_themeModeKey, defaultValue: 'system');
-    final localeCode = prefsManager.getString(_localeCodeKey, defaultValue: 'en');
+    final theme = prefsManager.getString(PrefsKeys.themeMode, defaultValue: 'system');
+    final localeCode = prefsManager.getString(PrefsKeys.localeCode, defaultValue: 'en');
 
     emit(
       state.copyWith(
@@ -43,12 +42,12 @@ class SettingsCubit extends Cubit<SettingsState> {
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
-    await prefsManager.setString(_themeModeKey, mode.name);
+    await prefsManager.setString(PrefsKeys.themeMode, mode.name);
     emit(state.copyWith(themeMode: mode));
   }
 
   Future<void> setLocale(Locale locale) async {
-    await prefsManager.setString(_localeCodeKey, locale.languageCode);
+    await prefsManager.setString(PrefsKeys.localeCode, locale.languageCode);
     emit(state.copyWith(locale: locale));
   }
 

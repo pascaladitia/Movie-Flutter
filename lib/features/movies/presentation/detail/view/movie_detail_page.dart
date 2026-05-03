@@ -8,8 +8,7 @@ import '../../../../../core/widgets/app_error_dialog.dart';
 import '../../../../../core/widgets/app_loading.dart';
 import '../../../../../core/widgets/movie_poster.dart';
 import '../../../domain/entities/movie.dart';
-import '../../favorites/bloc/favorites_cubit.dart';
-import '../bloc/movie_detail_cubit.dart';
+import '../cubit/movie_detail_cubit.dart';
 
 class MovieDetailPage extends StatefulWidget {
   final Movie movie;
@@ -47,7 +46,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => sl<MovieDetailCubit>()..load(widget.movie.id)),
-        BlocProvider(create: (_) => sl<FavoritesCubit>()..load()),
+        BlocProvider(create: (_) => sl<DetailFavoriteCubit>()),
       ],
       child: Scaffold(
         appBar: AppBar(title: Text(widget.movie.title)),
@@ -74,7 +73,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                   Text(widget.movie.overview),
                   const SizedBox(height: 16),
                   FilledButton.icon(
-                    onPressed: () => context.read<FavoritesCubit>().toggle(widget.movie),
+                    onPressed: () => context.read<DetailFavoriteCubit>().toggle(widget.movie),
                     icon: const Icon(Icons.favorite),
                     label: Text(l10n.favorites),
                   ),

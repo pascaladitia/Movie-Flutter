@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../domain/entities/movie.dart';
 import '../../../domain/entities/video_item.dart';
 import '../../../domain/usecases/favorites_usecases.dart';
 import '../../../domain/usecases/get_movie_videos_usecase.dart';
@@ -31,15 +32,8 @@ class MovieDetailState extends Equatable {
 class MovieDetailCubit extends Cubit<MovieDetailState> {
   final GetMovieVideosUseCase getVideos;
   final IsFavoriteUseCase isFavoriteUseCase;
-  final AddFavoriteUseCase addFavoriteUseCase;
-  final RemoveFavoriteUseCase removeFavoriteUseCase;
 
-  MovieDetailCubit({
-    required this.getVideos,
-    required this.isFavoriteUseCase,
-    required this.addFavoriteUseCase,
-    required this.removeFavoriteUseCase,
-  }) : super(MovieDetailState.initial());
+  MovieDetailCubit({required this.getVideos, required this.isFavoriteUseCase}) : super(MovieDetailState.initial());
 
   Future<void> load(int movieId) async {
     emit(state.copyWith(isLoading: true, error: null));
@@ -52,5 +46,22 @@ class MovieDetailCubit extends Cubit<MovieDetailState> {
       isFavorite: favoriteResult.data ?? false,
       error: videosResult.failure?.message,
     ));
+  }
+}
+
+class DetailFavoriteCubit extends Cubit<void> {
+  final AddFavoriteUseCase addFavorite;
+  final RemoveFavoriteUseCase removeFavorite;
+  final IsFavoriteUseCase isFavorite;
+
+  DetailFavoriteCubit({required this.addFavorite, required this.removeFavorite, required this.isFavorite}) : super(null);
+
+  Future<void> toggle(Movie movie) async {
+    final favoriteCheck = await isFavorite(movie.id);
+    if (favoriteCheck.data == true) {
+      await removeFavorite(movie.id);
+    } else {
+      await addFavorite(movie);
+    }
   }
 }

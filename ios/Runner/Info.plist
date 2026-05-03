@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location is used to fill your profile address.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photo library access is used to pick a profile image.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera access is used to capture a profile image.</string>
 </dict>
 </plist>

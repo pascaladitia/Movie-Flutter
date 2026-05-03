@@ -7,7 +7,7 @@ import '../../../../../core/widgets/app_error_dialog.dart';
 import '../../../../../core/widgets/app_loading.dart';
 import '../../../../../core/widgets/movie_poster.dart';
 import '../../detail/view/movie_detail_page.dart';
-import '../bloc/search_movies_cubit.dart';
+import '../cubit/search_movies_cubit.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});

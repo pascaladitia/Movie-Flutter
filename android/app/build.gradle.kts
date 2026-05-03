@@ -5,6 +5,18 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val env = mutableMapOf<String, String>()
+val envFile = rootProject.file(".env")
+if (envFile.exists()) {
+    envFile.readLines().forEach { line ->
+        val trimmed = line.trim()
+        if (trimmed.isNotEmpty() && !trimmed.startsWith("#") && trimmed.contains("=")) {
+            val (key, value) = trimmed.split("=", limit = 2)
+            env[key.trim()] = value.trim()
+        }
+    }
+}
+
 android {
     namespace = "com.pascal.movie_flutter"
     compileSdk = flutter.compileSdkVersion
@@ -28,6 +40,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["MAPS_API_KEY"] = env["GOOGLE_MAPS_API_KEY"] ?: "DUMMY_GOOGLE_MAPS_API_KEY" // TODO: replace with real key.
     }
 
     buildTypes {

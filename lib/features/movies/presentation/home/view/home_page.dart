@@ -8,7 +8,7 @@ import '../../../../../core/widgets/app_loading.dart';
 import '../../../../../core/widgets/movie_poster.dart';
 import '../../../domain/entities/movie.dart';
 import '../../detail/view/movie_detail_page.dart';
-import '../bloc/home_movies_cubit.dart';
+import '../cubit/home_movies_cubit.dart';
 import '../widgets/horizontal_movie_strip.dart';
 import '../widgets/section_title.dart';
 

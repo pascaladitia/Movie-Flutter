@@ -7,7 +7,7 @@ import '../../../../../core/widgets/app_error_dialog.dart';
 import '../../../../../core/widgets/app_loading.dart';
 import '../../../../../core/widgets/movie_poster.dart';
 import '../../detail/view/movie_detail_page.dart';
-import '../bloc/favorites_cubit.dart';
+import '../cubit/favorites_cubit.dart';
 
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
