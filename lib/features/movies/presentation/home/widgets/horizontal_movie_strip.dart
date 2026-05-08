@@ -28,7 +28,12 @@ class HorizontalMovieStrip extends StatelessWidget {
                 children: [
                   MoviePoster(path: movie.posterPath, width: 140, height: 190),
                   const SizedBox(height: 8),
-                  Text(movie.title, maxLines: 2, overflow: TextOverflow.ellipsis),
+                  Text(
+                    movie.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
                 ],
               ),
             ),

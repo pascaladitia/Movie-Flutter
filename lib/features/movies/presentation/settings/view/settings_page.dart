@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../../core/di/injection.dart';
 import '../../../../../core/l10n/app_localizations.dart';
+import '../../../../../core/theme/app_theme_extensions.dart';
 import '../../../../../core/widgets/app_error_dialog.dart';
 import '../../../../../core/widgets/app_form_components.dart';
 import '../../../../profile/data/profile_local_data_source.dart';
@@ -35,6 +36,7 @@ class SettingsPage extends StatelessWidget {
               return BlocBuilder<SettingsCubit, SettingsState>(
                 bloc: settingsCubit,
                 builder: (context, settingsState) {
+                  final customColors = Theme.of(context).extension<AppCustomColors>()!;
                   return ListView(
                     padding: const EdgeInsets.all(16),
                     children: [
@@ -85,9 +87,9 @@ class SettingsPage extends StatelessWidget {
                                   Container(
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      border: Border.all(color: Colors.white70, width: 2),
-                                      boxShadow: const [
-                                        BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 6)),
+                                      border: Border.all(color: customColors.avatarBorder, width: 2),
+                                      boxShadow: [
+                                        BoxShadow(color: customColors.avatarShadow, blurRadius: 10, offset: const Offset(0, 6)),
                                       ],
                                     ),
                                     child: CircleAvatar(
@@ -103,7 +105,7 @@ class SettingsPage extends StatelessWidget {
                                       children: [
                                         Text(
                                           profile.name.isEmpty ? 'Your Name' : profile.name,
-                                          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                                          style: Theme.of(context).textTheme.titleLarge,
                                         ),
                                         const SizedBox(height: 4),
                                         Text(

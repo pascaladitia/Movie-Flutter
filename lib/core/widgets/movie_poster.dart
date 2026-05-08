@@ -2,33 +2,48 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/api_constants.dart';
+import '../theme/app_theme_extensions.dart';
 
 class MoviePoster extends StatelessWidget {
   final String? path;
   final double width;
   final double height;
+  final double borderRadius;
 
-  const MoviePoster({super.key, required this.path, this.width = 110, this.height = 160});
+  const MoviePoster({
+    super.key,
+    required this.path,
+    this.width = 110,
+    this.height = 160,
+    this.borderRadius = 12,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final customColors = Theme.of(context).extension<AppCustomColors>()!;
     if (path == null || path!.isEmpty) {
-      return Container(
+      return SizedBox(
         width: width,
         height: height,
-        color: Colors.grey.shade300,
-        child: const Icon(Icons.image_not_supported_outlined),
+        child: ColoredBox(
+          color: customColors.posterPlaceholder,
+          child: const Icon(Icons.image_not_supported_outlined),
+        ),
       );
     }
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(borderRadius),
       child: CachedNetworkImage(
         width: width,
         height: height,
         fit: BoxFit.cover,
         imageUrl: '${ApiConstants.posterBaseUrl}${path!}',
-        placeholder: (context, url) => Container(color: Colors.grey.shade200),
+        placeholder: (context, url) => SizedBox(
+          width: width,
+          height: height,
+          child: ColoredBox(color: customColors.posterPlaceholderShimmer),
+        ),
       ),
     );
   }
