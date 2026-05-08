@@ -26,12 +26,20 @@ class SettingsCubit extends Cubit<SettingsState> {
   final PrefsManager prefsManager;
 
   SettingsCubit(this.prefsManager)
-      : super(const SettingsState(themeMode: ThemeMode.system, locale: Locale('en')));
+    : super(
+        const SettingsState(themeMode: ThemeMode.system, locale: Locale('en')),
+      );
 
   Future<void> init() async {
     await prefsManager.init();
-    final theme = prefsManager.getString(PrefsKeys.themeMode, defaultValue: 'system');
-    final localeCode = prefsManager.getString(PrefsKeys.localeCode, defaultValue: 'en');
+    final theme = prefsManager.getString(
+      PrefsKeys.themeMode,
+      defaultValue: 'system',
+    );
+    final localeCode = prefsManager.getString(
+      PrefsKeys.localeCode,
+      defaultValue: 'en',
+    );
 
     emit(
       state.copyWith(

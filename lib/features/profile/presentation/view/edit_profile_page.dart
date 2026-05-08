@@ -7,16 +7,20 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/widgets/app_error_dialog.dart';
 import '../../../../core/widgets/app_form_components.dart';
-import '../../data/profile_local_data_source.dart';
+import '../../domain/entities/profile.dart';
+import '../../domain/usecases/save_profile_usecase.dart';
 import '../cubit/edit_profile_cubit.dart';
 import 'location_picker_page.dart';
 
-
 class EditProfilePage extends StatefulWidget {
-  final ProfileData initialProfile;
-  final ProfileLocalDataSource localDataSource;
+  final Profile initialProfile;
+  final SaveProfileUseCase saveProfileUseCase;
 
-  const EditProfilePage({super.key, required this.initialProfile, required this.localDataSource});
+  const EditProfilePage({
+    super.key,
+    required this.initialProfile,
+    required this.saveProfileUseCase,
+  });
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
@@ -44,15 +48,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => EditProfileCubit(localDataSource: widget.localDataSource, initialProfile: widget.initialProfile),
+      create: (_) => EditProfileCubit(
+        saveProfileUseCase: widget.saveProfileUseCase,
+        initialProfile: widget.initialProfile,
+      ),
       child: Scaffold(
         appBar: AppBar(title: const Text('Edit Profile')),
         body: BlocConsumer<EditProfileCubit, EditProfileState>(
-          listenWhen: (previous, current) => previous.error != current.error && current.error != null,
-          listener: (context, state) => showAppErrorDialog(context, message: state.error!),
+          listenWhen: (previous, current) =>
+              previous.error != current.error && current.error != null,
+          listener: (context, state) =>
+              showAppErrorDialog(context, message: state.error!),
           builder: (context, state) {
             final cubit = context.read<EditProfileCubit>();
-            final birthDate = state.profile.birthDate != null ? DateTime.tryParse(state.profile.birthDate!) : null;
+            final birthDate = state.profile.birthDate != null
+                ? DateTime.tryParse(state.profile.birthDate!)
+                : null;
 
             return Form(
               key: _formKey,
@@ -64,8 +75,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       children: [
                         CircleAvatar(
                           radius: 48,
-                          backgroundImage: state.profile.imagePath != null ? FileImage(File(state.profile.imagePath!)) : null,
-                          child: state.profile.imagePath == null ? const Icon(Icons.person, size: 38) : null,
+                          backgroundImage: state.profile.imagePath != null
+                              ? FileImage(File(state.profile.imagePath!))
+                              : null,
+                          child: state.profile.imagePath == null
+                              ? const Icon(Icons.person, size: 38)
+                              : null,
                         ),
                         const SizedBox(height: 12),
                         FilledButton.icon(
@@ -80,7 +95,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   AppOutlinedTextField(
                     controller: _nameController,
                     label: 'Name',
-                    validator: (value) => (value == null || value.trim().isEmpty) ? 'Name is required' : null,
+                    validator: (value) =>
+                        (value == null || value.trim().isEmpty)
+                        ? 'Name is required'
+                        : null,
                   ),
                   const SizedBox(height: 12),
                   AppFilledTextField(
@@ -102,12 +120,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         context: context,
                         firstDate: DateTime(1900),
                         lastDate: now,
-                        initialDate: birthDate ?? DateTime(now.year - 20, now.month, now.day),
+                        initialDate:
+                            birthDate ??
+                            DateTime(now.year - 20, now.month, now.day),
                       );
                       if (picked != null) cubit.updateBirthDate(picked);
                     },
                     icon: const Icon(Icons.calendar_month_outlined),
-                    label: Text(birthDate == null ? 'Set Birth Date' : DateFormat('dd MMM yyyy').format(birthDate)),
+                    label: Text(
+                      birthDate == null
+                          ? 'Set Birth Date'
+                          : DateFormat('dd MMM yyyy').format(birthDate),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Text(state.profile.address ?? 'Address not set'),
@@ -123,13 +147,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                       OutlinedButton.icon(
                         onPressed: () async {
-                          final initial = LatLng(state.profile.latitude ?? -6.2, state.profile.longitude ?? 106.8);
+                          final initial = LatLng(
+                            state.profile.latitude ?? -6.2,
+                            state.profile.longitude ?? 106.8,
+                          );
                           final selected = await Navigator.push<LatLng>(
                             context,
-                            MaterialPageRoute(builder: (_) => LocationPickerPage(initialLocation: initial)),
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  LocationPickerPage(initialLocation: initial),
+                            ),
                           );
                           if (selected != null) {
-                            await cubit.setLocationByCoordinates(selected.latitude, selected.longitude);
+                            await cubit.setLocationByCoordinates(
+                              selected.latitude,
+                              selected.longitude,
+                            );
                           }
                         },
                         icon: const Icon(Icons.map_outlined),
@@ -147,7 +180,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             cubit.updateEmail(_emailController.text.trim());
                             await cubit.save();
                             if (!context.mounted) return;
-                            if (context.read<EditProfileCubit>().state.error == null) {
+                            if (context.read<EditProfileCubit>().state.error ==
+                                null) {
                               Navigator.pop(context, true);
                             }
                           },
