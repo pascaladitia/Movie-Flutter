@@ -1,6 +1,7 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../../../core/error/failure.dart';
 import '../models/movie_model.dart';
 
 class FavoritesLocalDataSource {
@@ -8,11 +9,12 @@ class FavoritesLocalDataSource {
   Database? _database;
 
   Future<Database> _db() async {
-    _database ??= await openDatabase(
-      join(await getDatabasesPath(), 'movie_app.db'),
-      version: 1,
-      onCreate: (db, version) async {
-        await db.execute('''
+    try {
+      _database ??= await openDatabase(
+        join(await getDatabasesPath(), 'movie_app.db'),
+        version: 1,
+        onCreate: (db, version) async {
+          await db.execute('''
           CREATE TABLE $_tableName(
             id INTEGER PRIMARY KEY,
             title TEXT,
@@ -23,30 +25,49 @@ class FavoritesLocalDataSource {
             releaseDate TEXT
           )
         ''');
-      },
-    );
-    return _database!;
+        },
+      );
+      return _database!;
+    } catch (e) {
+      throw Failure('DB: Failed to initialize local database');
+    }
   }
 
   Future<List<MovieModel>> getFavorites() async {
-    final db = await _db();
-    final maps = await db.query(_tableName, orderBy: 'id DESC');
-    return maps.map(MovieModel.fromMap).toList();
+    try {
+      final db = await _db();
+      final maps = await db.query(_tableName, orderBy: 'id DESC');
+      return maps.map(MovieModel.fromMap).toList();
+    } catch (e) {
+      throw Failure('DB: Failed to load favorites');
+    }
   }
 
   Future<void> addFavorite(MovieModel movie) async {
-    final db = await _db();
-    await db.insert(_tableName, movie.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    try {
+      final db = await _db();
+      await db.insert(_tableName, movie.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    } catch (e) {
+      throw Failure('DB: Failed to save favorite movie');
+    }
   }
 
   Future<void> removeFavorite(int movieId) async {
-    final db = await _db();
-    await db.delete(_tableName, where: 'id = ?', whereArgs: [movieId]);
+    try {
+      final db = await _db();
+      await db.delete(_tableName, where: 'id = ?', whereArgs: [movieId]);
+    } catch (e) {
+      throw Failure('DB: Failed to remove favorite movie');
+    }
   }
 
   Future<bool> isFavorite(int movieId) async {
-    final db = await _db();
-    final maps = await db.query(_tableName, where: 'id = ?', whereArgs: [movieId], limit: 1);
-    return maps.isNotEmpty;
+    try {
+      final db = await _db();
+      final maps = await db.query(_tableName, where: 'id = ?', whereArgs: [movieId], limit: 1);
+      return maps.isNotEmpty;
+    } catch (e) {
+      throw Failure('DB: Failed to read favorite status');
+    }
   }
 }

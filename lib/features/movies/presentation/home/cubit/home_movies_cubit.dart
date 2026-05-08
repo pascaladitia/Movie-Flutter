@@ -27,26 +27,17 @@ class HomeMoviesState extends Equatable {
   });
 
   factory HomeMoviesState.initial() => const HomeMoviesState(
-        isLoading: false,
-        isLoadingMore: false,
-        error: null,
-        discoverMovies: [],
-        topRated: [],
-        upcoming: [],
-        page: 1,
-        hasReachedEnd: false,
-      );
+    isLoading: false,
+    isLoadingMore: false,
+    error: null,
+    discoverMovies: [],
+    topRated: [],
+    upcoming: [],
+    page: 1,
+    hasReachedEnd: false,
+  );
 
-  HomeMoviesState copyWith({
-    bool? isLoading,
-    bool? isLoadingMore,
-    String? error,
-    List<Movie>? discoverMovies,
-    List<Movie>? topRated,
-    List<Movie>? upcoming,
-    int? page,
-    bool? hasReachedEnd,
-  }) {
+  HomeMoviesState copyWith({bool? isLoading, bool? isLoadingMore, String? error, List<Movie>? discoverMovies, List<Movie>? topRated, List<Movie>? upcoming, int? page, bool? hasReachedEnd}) {
     return HomeMoviesState(
       isLoading: isLoading ?? this.isLoading,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
@@ -71,7 +62,6 @@ class HomeMoviesCubit extends Cubit<HomeMoviesState> {
 
   Future<void> loadInitial() async {
     emit(state.copyWith(isLoading: true, error: null, page: 1, hasReachedEnd: false, discoverMovies: []));
-
     final sectionsResult = await sectionsUseCase();
     final discoverResult = await discoverUseCase(page: 1);
 
