@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 
 @immutable
 class AppCustomColors extends ThemeExtension<AppCustomColors> {
+  final Color success;
+  final Color warning;
+  final Color info;
+  final Color border;
+  final Color divider;
+  final Color inputFill;
   final Color onImageText;
   final Color onImageSubtleText;
   final Color imageOverlayTop;
@@ -13,6 +19,12 @@ class AppCustomColors extends ThemeExtension<AppCustomColors> {
   final Color avatarShadow;
 
   const AppCustomColors({
+    required this.success,
+    required this.warning,
+    required this.info,
+    required this.border,
+    required this.divider,
+    required this.inputFill,
     required this.onImageText,
     required this.onImageSubtleText,
     required this.imageOverlayTop,
@@ -26,6 +38,12 @@ class AppCustomColors extends ThemeExtension<AppCustomColors> {
 
   @override
   AppCustomColors copyWith({
+    Color? success,
+    Color? warning,
+    Color? info,
+    Color? border,
+    Color? divider,
+    Color? inputFill,
     Color? onImageText,
     Color? onImageSubtleText,
     Color? imageOverlayTop,
@@ -37,6 +55,12 @@ class AppCustomColors extends ThemeExtension<AppCustomColors> {
     Color? avatarShadow,
   }) {
     return AppCustomColors(
+      success: success ?? this.success,
+      warning: warning ?? this.warning,
+      info: info ?? this.info,
+      border: border ?? this.border,
+      divider: divider ?? this.divider,
+      inputFill: inputFill ?? this.inputFill,
       onImageText: onImageText ?? this.onImageText,
       onImageSubtleText: onImageSubtleText ?? this.onImageSubtleText,
       imageOverlayTop: imageOverlayTop ?? this.imageOverlayTop,
@@ -53,6 +77,12 @@ class AppCustomColors extends ThemeExtension<AppCustomColors> {
   AppCustomColors lerp(ThemeExtension<AppCustomColors>? other, double t) {
     if (other is! AppCustomColors) return this;
     return AppCustomColors(
+      success: Color.lerp(success, other.success, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
+      info: Color.lerp(info, other.info, t)!,
+      border: Color.lerp(border, other.border, t)!,
+      divider: Color.lerp(divider, other.divider, t)!,
+      inputFill: Color.lerp(inputFill, other.inputFill, t)!,
       onImageText: Color.lerp(onImageText, other.onImageText, t)!,
       onImageSubtleText: Color.lerp(onImageSubtleText, other.onImageSubtleText, t)!,
       imageOverlayTop: Color.lerp(imageOverlayTop, other.imageOverlayTop, t)!,

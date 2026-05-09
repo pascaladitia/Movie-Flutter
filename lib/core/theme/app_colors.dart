@@ -22,6 +22,12 @@ class AppColors {
   }
 
   static const AppCustomColors lightCustom = AppCustomColors(
+    success: Color(0xFF2E7D32),
+    warning: Color(0xFFED6C02),
+    info: Color(0xFF0288D1),
+    border: Color(0x1F000000),
+    divider: Color(0x1F000000),
+    inputFill: Color(0xFFF5F5F5),
     onImageText: Color(0xFFFFFFFF),
     onImageSubtleText: Color(0xD9FFFFFF),
     imageOverlayTop: Color(0x40000000),
@@ -34,6 +40,12 @@ class AppColors {
   );
 
   static const AppCustomColors darkCustom = AppCustomColors(
+    success: Color(0xFF81C784),
+    warning: Color(0xFFFFB74D),
+    info: Color(0xFF4FC3F7),
+    border: Color(0x33FFFFFF),
+    divider: Color(0x33FFFFFF),
+    inputFill: Color(0xFF1F1F1F),
     onImageText: Color(0xFFFFFFFF),
     onImageSubtleText: Color(0xD9FFFFFF),
     imageOverlayTop: Color(0x40000000),
